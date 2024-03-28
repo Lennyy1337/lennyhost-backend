@@ -7,9 +7,13 @@ import multipart from '@fastify/multipart'
 import fastifyStatic from '@fastify/static';
 
 import * as path from 'path';
-
+import fs from 'fs'
 
 dotenv.config()
+
+if (!fs.existsSync("uploads")){
+  fs.mkdirSync("uploads");
+}
 
 router()
 
@@ -22,6 +26,9 @@ fastify.get('/uploads/:filekey', function (req, reply) {
   const { filekey } = req.params as any
   reply.sendFile(filekey)
 })
+
+
+
 
 
 fastify.register(multipart, {

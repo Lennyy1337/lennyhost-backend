@@ -28,7 +28,7 @@ export async function getUploadedFilesRoute(){
         
     }catch(e){
         reply.code(500).send({success: false, message: "Internal Server Error."})
-        console.log("Error in upload;")
+        console.log("Error in getUploadedFiles;")
         console.log(e)
     }
     })
