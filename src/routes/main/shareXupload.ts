@@ -50,6 +50,7 @@ export async function uploadShareXRoute(){
 
             if(!user){
                 reply.code(403).send({success: false, message: "Invalid Email."})
+                return
             }
             if(!(await bcrypt.compare(password as string, user!.password))){
                 reply.code(403).send({success: false, message: "Invalid Password."})

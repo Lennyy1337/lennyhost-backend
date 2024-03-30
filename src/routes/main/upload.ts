@@ -41,6 +41,7 @@ export async function uploadRoute(){
         
         if(!user){
             reply.send({success: false, message: "Invalid Authorization."})
+            return
         }
         
         const FileKey = await FileManager.uploadFile(file as Readable, data.filename)
