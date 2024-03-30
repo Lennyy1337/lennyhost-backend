@@ -27,7 +27,9 @@ fastify.get('/uploads/:filekey', function (req, reply) {
   reply.sendFile(filekey)
 })
 
-
+fastify.get('/', function (req, reply) {
+  reply.redirect("https://lenny.host")
+})
 
 
 
