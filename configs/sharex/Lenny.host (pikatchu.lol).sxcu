@@ -1,0 +1,13 @@
+﻿{
+  "Version": "16.0.1",
+  "Name": "Lenny.host (pikatchu.lol)",
+  "DestinationType": "ImageUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "pikatchu.lol//upload/sharex",
+  "Headers": {
+    "authorization": "email:password"
+  },
+  "Body": "MultipartFormData",
+  "FileFormName": "file",
+  "URL": "pikatchu.lol/uploads/{json:data.fileKey}"
+}

@@ -47,7 +47,7 @@ export async function uploadShareXRoute(){
                     email: email
                 }
             })
-
+            
             if(!user){
                 reply.code(403).send({success: false, message: "Invalid Email."})
                 return
