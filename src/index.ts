@@ -15,9 +15,6 @@ if (!fs.existsSync("uploads")){
   fs.mkdirSync("uploads");
 }
 
-if (!fs.existsSync("uploads/tmp")){
-  fs.mkdirSync("uploads/tmp");
-}
 
 router()
 
