@@ -15,6 +15,10 @@ if (!fs.existsSync("uploads")){
   fs.mkdirSync("uploads");
 }
 
+if (!fs.existsSync("uploads/tmp")){
+  fs.mkdirSync("uploads/tmp");
+}
+
 router()
 
 fastify.register(fastifyStatic, {
@@ -22,8 +26,14 @@ fastify.register(fastifyStatic, {
   prefix: '/uploads', 
 });
 
-fastify.get('/uploads/:filekey', function (req, reply) {
+fastify.get('/uploads/:filekey', async function (req, reply) {
   const { filekey } = req.params as any
+  const filextension = filekey.split(".").pop()
+  if(filextension == "sxcu"){
+    await reply.download(filekey)
+    fs.rmSync(`uploads/${filekey}`)
+    return
+  }
   reply.sendFile(filekey)
 })
 

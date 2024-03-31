@@ -1,8 +1,12 @@
+/**
+ * @deprecated New method for shareX uploads
+ */
+
 import { Readable } from "stream";
-import { fastify } from "../../init/fastify";
-import FileManager from "../../init/file";
-import { prisma } from "../../init/prisma";
-import {jwt} from "../../init/jwt";
+import { fastify } from "../../../init/fastify";
+import FileManager from "../../../init/file";
+import { prisma } from "../../../init/prisma";
+import {jwt} from "../../../init/jwt";
 import bcrypt from 'bcrypt'
 
 function extract(authHeader: string): string[] | null {
