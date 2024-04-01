@@ -7,21 +7,31 @@ import { jwt } from "../../../init/jwt";
 import { v4 } from 'uuid'
 
 
-export async function generateKey() {
-    fastify.post('/key/generate', async function (request, reply) {
+export async function redeemKey() {
+    fastify.post('/key/redeem', async function (request, reply) {
         try {
 
-
             const { authorization } = request.headers
-            const { type } = request.body as any
+            const { key } = request.body as any
 
             if (!authorization) {
-                reply.code(403).send({ success: false, message: "No authorization" })
+                reply.code(403).send({ success: false, message: "No authorization." })
                 return
             }
 
-            if (!type) {
-                reply.code(403).send({ success: false, message: "Please set the desired whitelist type of the key." })
+            if (!key) {
+                reply.code(403).send({ success: false, message: "No key provided." })
+                return
+            }
+
+            const keyDB = await prisma.key.findUnique({
+                where: {
+                    key: key
+                }
+            })
+
+            if (!keyDB) {
+                reply.send({ success: false, message: "Invalid key provided." })
                 return
             }
 
@@ -32,30 +42,22 @@ export async function generateKey() {
                 return
             }
 
-            // why did i do this
-            let allowed: boolean = false
-
-            if (user.role == "OWNER" as any) {
-                allowed = true
-            }
-
-            if (user.role == "STAFF" as any) {
-                allowed = true
-            }
-
-            if (!allowed) {
-                reply.code(403).send({ success: false, message: "You are not authorized to perform this action." })
-                return
-            }
-
-            const key = await prisma.key.create({
-                data: {
-                    key: v4(),
-                    type: type
+            await prisma.key.delete({
+                where: {
+                    key: keyDB?.key
                 }
             })
 
-            reply.send({ success: true, message: "Key created!", data: key })
+            await prisma.user.update({
+                where: {
+                    id: user.id
+                },
+                data: {
+                    role: keyDB?.type
+                }
+            })
+
+            reply.send({ success: true, message: "Key Redeemed!" })
 
         } catch (e: any) {
             if (e.message.includes('Expected KeyRoles')) {
