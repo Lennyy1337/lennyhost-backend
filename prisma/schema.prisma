@@ -13,13 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model key {
+  key String @unique
+  type KeyRoles
+}
+
 model user {
-  id       String   @unique @default(uuid())
-  password String
-  username String
-  email    String   @unique
-  role     Role     @default(REGULAR)
-  uploads  upload[]
+  id          String   @unique @default(uuid())
+  password    String
+  username    String
+  email       String   @unique
+  role        Role     @default(REGULAR)
+  uploads     upload[]
 }
 
 model upload {
@@ -31,8 +36,13 @@ model upload {
   userId   String
 }
 
+enum KeyRoles {
+  STAFF
+  PREMIUM
+}
 enum Role {
   OWNER
+  STAFF
   PREMIUM
   REGULAR
 }

@@ -9,12 +9,19 @@ import fastifyStatic from '@fastify/static';
 import * as path from 'path';
 import fs from 'fs'
 
+import ratelimit from '@fastify/rate-limit'
+
 dotenv.config()
 
 if (!fs.existsSync("uploads")){
   fs.mkdirSync("uploads");
 }
 
+fastify.register(ratelimit, {
+  max: 10,
+  ban: 3,
+  timeWindow: "1 minute"
+})
 
 router()
 
