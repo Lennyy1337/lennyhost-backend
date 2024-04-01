@@ -6,7 +6,7 @@ import { Readable } from "stream";
 import { fastify } from "../../../init/fastify";
 import FileManager from "../../../init/file";
 import { prisma } from "../../../init/prisma";
-import {jwt} from "../../../init/jwt";
+import { jwt } from "../../../init/jwt";
 import bcrypt from 'bcrypt'
 
 function extract(authHeader: string): string[] | null {
@@ -23,9 +23,9 @@ function extract(authHeader: string): string[] | null {
 // Modified for shareX compatiblity
 // Expected authorization: email:password
 
-export async function uploadShareXRoute(){
-    fastify.post('/upload/sharex', async function(request, reply){
-        try{
+export async function uploadShareXRoute() {
+    fastify.post('/upload/sharex', async function (request, reply) {
+        try {
             const data = await request.file()
             const file = data?.file
 
@@ -33,15 +33,15 @@ export async function uploadShareXRoute(){
 
             const { authorization } = request.headers
 
-            if(!authorization){
-                reply.code(403).send({success: false, message: "No authorization"})
+            if (!authorization) {
+                reply.code(403).send({ success: false, message: "No authorization" })
                 return
             }
-            if(!file){
-                reply.code(400).send({success: false, message: "No file uploaded."})
+            if (!file) {
+                reply.code(400).send({ success: false, message: "No file uploaded." })
                 return
             }
-            
+
             const creds = extract(authorization)
             const email = creds![0]
             const password = creds![1]
@@ -51,13 +51,13 @@ export async function uploadShareXRoute(){
                     email: email
                 }
             })
-            
-            if(!user){
-                reply.code(403).send({success: false, message: "Invalid Email."})
+
+            if (!user) {
+                reply.code(403).send({ success: false, message: "Invalid Email." })
                 return
             }
-            if(!(await bcrypt.compare(password as string, user!.password))){
-                reply.code(403).send({success: false, message: "Invalid Password."})
+            if (!(await bcrypt.compare(password as string, user!.password))) {
+                reply.code(403).send({ success: false, message: "Invalid Password." })
                 return
             }
 
@@ -74,9 +74,9 @@ export async function uploadShareXRoute(){
             if (!allowed) {
                 throw new Error(`File type ${data.mimetype} is not allowed`);
             }
-            
+
             const FileKey = await FileManager.uploadFile(file as Readable, data.filename)
-    
+
             const upload = await prisma.upload.create({
                 data: {
                     mimetype: data.mimetype,
@@ -86,14 +86,14 @@ export async function uploadShareXRoute(){
                 }
             })
 
-            reply.send({success: true, message: "Uploaded!", data: upload})
-            
-        }catch(e: any){
+            reply.send({ success: true, message: "Uploaded!", data: upload })
+
+        } catch (e: any) {
             if (e.message.includes('is not allowed')) {
-                reply.code(400).send({success: false, message: "File type is not allowed."});
+                reply.code(400).send({ success: false, message: "File type is not allowed." });
                 return
             }
-            reply.code(500).send({success: false, message: "Internal Server Error."})
+            reply.code(500).send({ success: false, message: "Internal Server Error." })
             console.log("Error in upload;")
             console.log(e)
         }

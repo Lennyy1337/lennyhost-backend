@@ -1,8 +1,8 @@
 import { Readable } from "stream";
-import { fastify } from "../../init/fastify";
-import FileManager from "../../init/file";
-import { prisma } from "../../init/prisma";
-import { jwt } from "../../init/jwt";
+import { fastify } from "../../../init/fastify";
+import FileManager from "../../../init/file";
+import { prisma } from "../../../init/prisma";
+import { jwt } from "../../../init/jwt";
 
 import { v4 } from 'uuid'
 
@@ -10,10 +10,7 @@ import { v4 } from 'uuid'
 export async function generateKey() {
     fastify.post('/key/generate', async function (request, reply) {
         try {
-            if (!request.body) {
-                reply.code(400).send({ success: false, message: "This route requires a JSON body" })
-                return
-            }
+
 
             const { authorization } = request.headers
             const { type } = request.body as any
@@ -23,7 +20,7 @@ export async function generateKey() {
                 return
             }
 
-            if (!type){
+            if (!type) {
                 reply.code(403).send({ success: false, message: "Please set the desired whitelist type of the key." })
                 return
             }
