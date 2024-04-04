@@ -8,13 +8,13 @@ import { uploadShareXRoute } from "./routes/main/sharex/shareXupload";
 import { uploadRoute } from "./routes/main/upload";
 import { redeemKey } from "./routes/main/key/redeemKey";
 
-export function router(){
-    fastify.register(registerRoute)
-    fastify.register(loginRoute)
-    fastify.register(uploadRoute)
-    fastify.register(getUploadedFilesRoute)
-    //fastify.register(uploadShareXRoute)
-    fastify.register(getSxcuRoute)
-    fastify.register(generateKey)
-    fastify.register(redeemKey)
+export function router() {
+  fastify.register(registerRoute);
+  fastify.register(loginRoute);
+  fastify.register(uploadRoute);
+  fastify.register(getUploadedFilesRoute);
+  //fastify.register(uploadShareXRoute)
+  fastify.register(getSxcuRoute);
+  fastify.register(generateKey);
+  fastify.register(redeemKey);
 }
