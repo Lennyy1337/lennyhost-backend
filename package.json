@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "start": "node ./build/index.js",
-    "build": "npx prisma generate && tsc",
-    "dev": "npx tsx watch ./src/index.ts"
+    "build": "prisma generate && tsc",
+    "dev": "tsx watch ./src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,9 +19,7 @@
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
-    "i": "^0.3.7",
     "jsonwebtoken": "^9.0.2",
-    "npm": "^10.5.0",
     "prisma": "^5.11.0",
     "short-unique-id": "^5.0.3",
     "uuid": "^9.0.1"
