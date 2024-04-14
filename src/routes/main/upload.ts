@@ -9,21 +9,21 @@ export async function uploadRoute() {
     try {
       const data = await request.file();
       const file = data?.file;
-
       const allowedFileTypes = ["image/*", "video/*"];
-
       const { authorization } = request.headers;
+      let allowed = false;
 
       if (!authorization) {
-        reply.code(403).send({ success: false, message: "No authorization" });
-        return;
-      }
-      if (!file) {
-        reply.code(400).send({ success: false, message: "No file uploaded." });
-        return;
+        return reply
+          .code(403)
+          .send({ success: false, message: "No authorization" });
       }
 
-      let allowed = false;
+      if (!file) {
+        return reply
+          .code(400)
+          .send({ success: false, message: "No file uploaded." });
+      }
 
       for (const type of allowedFileTypes) {
         const regex = new RegExp("^" + type.replace("*", ".*") + "$");
@@ -34,14 +34,17 @@ export async function uploadRoute() {
       }
 
       if (!allowed) {
-        throw new Error(`File type ${data.mimetype} is not allowed`);
+        return reply
+          .code(400)
+          .send({ success: false, message: "File type is not allowed." });
       }
 
       const user = await jwt.getUserFromJWT(authorization);
 
       if (!user) {
-        reply.send({ success: false, message: "Invalid Authorization." });
-        return;
+        return reply
+          .code(401)
+          .send({ success: false, message: "Invalid Authorization." });
       }
 
       const FileKey = await FileManager.uploadFile(
@@ -54,23 +57,21 @@ export async function uploadRoute() {
           mimetype: data.mimetype,
           fileKey: FileKey,
           fileName: data.filename,
-          userId: user?.id as string,
+          userId: user.id,
         },
       });
 
-      reply.send({ success: true, message: "Uploaded!", data: upload });
+      return reply.send({ success: true, message: "Uploaded!", data: upload });
     } catch (e: any) {
       if (e.message.includes("is not allowed")) {
-        reply
+        return reply
           .code(400)
           .send({ success: false, message: "File type is not allowed." });
-        return;
       }
-      reply
+      console.error("Error in upload:", e);
+      return reply
         .code(500)
         .send({ success: false, message: "Internal Server Error." });
-      console.log("Error in upload;");
-      console.log(e);
     }
   });
 }

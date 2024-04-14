@@ -2,7 +2,7 @@ import { fastify } from "./init/fastify";
 import { loginRoute } from "./routes/auth/login";
 import { registerRoute } from "./routes/auth/register";
 import { generateKey } from "./routes/main/key/generateKey";
-import { getUploadedFilesRoute } from "./routes/main/getuploadedfiles";
+import { getUploadedFilesRoute } from "./routes/main/getUploadedFiles";
 import { getSxcuRoute } from "./routes/main/sharex/getsxcu/getSxcu";
 import { uploadRoute } from "./routes/main/upload";
 import { redeemKey } from "./routes/main/key/redeemKey";
