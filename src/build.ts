@@ -3,9 +3,15 @@ import {
     serializerCompiler,
     validatorCompiler,
 } from 'fastify-type-provider-zod';
+import fastifyRateLimit from '@fastify/rate-limit';
+import fastifyMultipart from '@fastify/multipart';
+import fastifyCors from '@fastify/cors';
+import fastifyHelmet from '@fastify/helmet';
 
 import { loggerConfig } from './utils/logger';
 import { randId } from './utils/randId';
+
+import { routes } from './api/routes';
 
 const buildServer = () => {
     const app: FastifyInstance = Fastify({
@@ -16,6 +22,18 @@ const buildServer = () => {
         },
     });
 
+    // plugin section
+    app.register(fastifyRateLimit, {
+        max: 5,
+        timeWindow: '1 second',
+    });
+    app.register(fastifyCors, {
+        origin: '*', // for now set the wildcard
+    });
+    app.register(fastifyHelmet);
+    app.register(fastifyMultipart, {
+        // todo.
+    });
     app.setValidatorCompiler(validatorCompiler);
     app.setSerializerCompiler(serializerCompiler);
 
@@ -46,6 +64,8 @@ const buildServer = () => {
 
         return payload;
     });
+
+    app.register(routes);
 
     return app;
 };
