@@ -21,6 +21,7 @@
         "@fastify/multipart": "^8.2.0",
         "@fastify/rate-limit": "^9.1.0",
         "@prisma/client": "^5.14.0",
+        "argon2": "^0.40.1",
         "dotenv": "^16.4.5",
         "fastify": "^4.27.0",
         "fastify-type-provider-zod": "^1.1.9",
