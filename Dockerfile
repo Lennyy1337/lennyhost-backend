@@ -1,17 +1,27 @@
-FROM node:latest
+FROM node:20-alpine AS base
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN npm install
+RUN npm install -g pnpm
+
+RUN pnpm install
 
 COPY . .
 
-RUN npm install -g typescript
+RUN pnpm run db:generate
 
-RUN npm run build
+RUN pnpm run build
+
+FROM node:20-alpine AS runtime
+
+WORKDIR /app
+
+COPY --from=base /app .
+
+ENV NODE_ENV=production
 
 EXPOSE 5000
 
-CMD ["npm", "run", "start"]
+CMD ["node", "./build/main.js"]

@@ -11,7 +11,7 @@ import fastifyHelmet from '@fastify/helmet';
 import { loggerConfig } from './utils/logger';
 import { randId } from './utils/randId';
 
-import { routes } from './api/routes';
+// import { routes } from './api/routes';
 
 const buildServer = () => {
     const app: FastifyInstance = Fastify({
@@ -64,8 +64,6 @@ const buildServer = () => {
 
         return payload;
     });
-
-    app.register(routes);
 
     return app;
 };
