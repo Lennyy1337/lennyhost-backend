@@ -18,6 +18,11 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "skipLibCheck": true,
-        "lib": ["esnext"]
+        "lib": ["esnext"],
+        "paths": {
+            "@/config/*": ["src/config/*"],
+            "@/utils/*": ["src/utils/*"],
+            "@/adapters/*": ["src/adapters/*"]
+        }
     }
 }
