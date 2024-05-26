@@ -104,6 +104,9 @@ class UserService {
             where,
         });
     }
+
+    // TODO:
+    public async updateUser() {}
 }
 
 const userService = new UserService();
