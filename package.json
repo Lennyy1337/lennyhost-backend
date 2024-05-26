@@ -21,10 +21,10 @@
         "@fastify/multipart": "^8.2.0",
         "@fastify/rate-limit": "^9.1.0",
         "@prisma/client": "^5.14.0",
-        "argon2": "^0.40.1",
+        "argon2": "^0.40.3",
         "dotenv": "^16.4.5",
         "fastify": "^4.27.0",
-        "fastify-type-provider-zod": "^1.1.9",
+        "fastify-type-provider-zod": "^1.2.0",
         "ioredis": "^5.4.1",
         "jsonwebtoken": "^9.0.2",
         "prisma": "^5.14.0",
@@ -33,10 +33,10 @@
     "devDependencies": {
         "@types/jsonwebtoken": "^9.0.6",
         "@types/node": "^20.12.12",
-        "pino-pretty": "^11.0.0",
+        "pino-pretty": "^11.1.0",
         "prettier": "^3.2.5",
         "ts-node": "^10.9.2",
-        "tsx": "^4.10.5",
+        "tsx": "^4.11.0",
         "typescript": "^5.4.5"
     }
 }
