@@ -1,0 +1,57 @@
+services:
+
+  redis:
+    image: redis:7-alpine
+    container_name: lennyhost-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
+    networks:
+      - lennyhost-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: lennyhost-postgres
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DATABASE_URL=postgresql://manager:${POSTGRES_PASSWORD}@postgres:5432/db
+      - REDIS_URL=redis://redis:6379
+      - ORIGIN=${ORIGIN}
+      - AES_SECRET=${AES_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - lennyhost-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lennyhost-app
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - redis
+      - postgres
+    restart: always
+    networks:
+      - lennyhost-network
+
+volumes:
+  redis-data:
+  postgres-data:
+
+
+networks:
+  lennyhost-network:
+    name: lennyhost-network
