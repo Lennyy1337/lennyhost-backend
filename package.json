@@ -1,36 +1,63 @@
 {
-  "name": "lennyhost",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "start": "node ./build/index.js",
-    "build": "npx prisma generate && tsc",
-    "dev": "npx tsx watch ./src/index.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.540.0",
-    "@fastify/multipart": "^8.2.0",
-    "@fastify/rate-limit": "^9.1.0",
-    "@fastify/static": "^7.0.1",
-    "@prisma/client": "^5.11.0",
-    "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.5",
-    "fastify": "^4.26.2",
-    "i": "^0.3.7",
-    "jsonwebtoken": "^9.0.2",
-    "npm": "^10.5.0",
-    "prisma": "^5.11.0",
-    "short-unique-id": "^5.0.3",
-    "uuid": "^9.0.1"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/fastify-static": "^2.2.1",
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^20.11.30",
-    "@types/uuid": "^9.0.8"
-  }
+    "name": "@lennyhost/backend",
+    "version": "0.0.0",
+    "description": "Backend API server for Lenny.Host",
+    "main": "./src/index.ts",
+    "scripts": {
+        "start": "export NODE_ENV=production && node ./build/main.ts",
+        "build": "rm -rf build && pnpm db:generate && tsc",
+        "dev": "export NODE_ENV=development && tsx watch ./src/main.ts | pino-pretty",
+        "db:push": "prisma db push",
+        "db:pull": "prisma db pull",
+        "db:generate": "prisma generate",
+        "email:dev": "email dev --dir=./src/emails",
+        "clean": "rm -rf node_modules build",
+        "format": "prettier --write **/*"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lennyhost/backend.git"
+    },
+    "keywords": [],
+    "author": "LennyHost <oss@lenny.host>",
+    "license": "AGPL-3.0-only",
+    "bugs": {
+        "url": "https://github.com/lennyhost/backend/issues"
+    },
+    "homepage": "https://github.com/lennyhost/backend#readme",
+    "dependencies": {
+        "@fastify/cors": "^9.0.1",
+        "@fastify/etag": "^5.2.0",
+        "@fastify/helmet": "^11.1.1",
+        "@fastify/jwt": "^8.0.1",
+        "@fastify/rate-limit": "^9.1.0",
+        "@prisma/client": "^5.14.0",
+        "@react-email/components": "0.0.19",
+        "@react-email/tailwind": "0.0.18",
+        "@types/jsonwebtoken": "^9.0.6",
+        "argon2": "^0.40.3",
+        "dayjs": "^1.11.11",
+        "dotenv": "^16.4.5",
+        "fast-jwt": "^4.0.1",
+        "fastify": "^4.27.0",
+        "fastify-plugin": "^4.5.1",
+        "fastify-type-provider-zod": "^1.2.0",
+        "fastify-yup-schema": "^1.0.4",
+        "ioredis": "^5.4.1",
+        "jsonwebtoken": "^9.0.2",
+        "nodemailer": "^6.9.13",
+        "react-email": "2.1.4",
+        "zod": "^3.23.8"
+    },
+    "devDependencies": {
+        "@types/node": "^20.12.13",
+        "@types/nodemailer": "^6.4.15",
+        "@types/react": "^18.3.3",
+        "pino-pretty": "^11.1.0",
+        "prettier": "^3.2.5",
+        "prisma": "^5.14.0",
+        "react": "^18.3.1",
+        "tsx": "^4.11.0",
+        "typescript": "^5.4.5"
+    }
 }

@@ -1,1 +1,1 @@
-# lennyhost-backend
+# `@lennyhost/backend`

@@ -1,11 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "relationJoins"]
 }
 
 datasource db {
@@ -13,36 +8,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model key {
-  key String @unique
-  type KeyRoles
-}
+model User {
+  id String @id @unique
 
-model user {
-  id          String   @unique @default(uuid())
+  name        String?
+  username    String  @unique
+  email       String  @unique
+  phone       String? @unique
   password    String
-  username    String
-  email       String   @unique
-  role        Role     @default(REGULAR)
-  uploads     upload[]
-}
+  avatar_hash String? @unique
+  avatar      String
+  verified    Boolean @default(false)
+  two_fa      Boolean @default(false)
+  two_fa_key  String  @unique
 
-model upload {
-  id       String @unique @default(uuid())
-  mimetype String
-  fileKey  String @unique
-  fileName String
-  user     user   @relation(fields: [userId], references: [id])
-  userId   String
-}
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-enum KeyRoles {
-  STAFF
-  PREMIUM
-}
-enum Role {
-  OWNER
-  STAFF
-  PREMIUM
-  REGULAR
+  @@index([id, username, email])
+  @@map("users")
 }
