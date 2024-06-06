@@ -1,18 +1,17 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import {
-    serializerCompiler,
-    validatorCompiler,
-} from 'fastify-type-provider-zod';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import fastifyEtag from '@fastify/etag';
+import { fastifyYupSchema } from 'fastify-yup-schema';
 
 import redisInstance from '@/adapters/redis';
 
 import { loggerConfig } from '@/utils/logger';
 import { id } from '@/utils/id';
-import { APP_CONSTANTS } from './config/app.config';
+import { APP_CONSTANTS } from '@/config/app.config';
+
+import routes from '@/routes/routes';
 
 const buildServer = () => {
     const app: FastifyInstance = Fastify({
@@ -28,6 +27,7 @@ const buildServer = () => {
         origin: APP_CONSTANTS.ORIGIN,
     });
     app.register(fastifyEtag);
+    app.register(fastifyYupSchema);
 
     app.register(rateLimit, {
         global: true,
@@ -37,9 +37,6 @@ const buildServer = () => {
         redis: redisInstance,
         nameSpace: 'rate-limit',
     });
-
-    app.setValidatorCompiler(validatorCompiler);
-    app.setSerializerCompiler(serializerCompiler);
 
     app.setNotFoundHandler(function (request, reply) {
         return reply.code(404).send({
@@ -68,6 +65,8 @@ const buildServer = () => {
 
         return payload;
     });
+
+    app.register(routes, { prefix: '/v1' });
 
     return app;
 };

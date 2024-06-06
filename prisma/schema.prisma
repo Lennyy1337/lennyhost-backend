@@ -15,7 +15,7 @@ model User {
   email       String  @unique
   password    String
   avatar_hash String? @unique
-  avatar      String
+  avatar      String?
   verified    Boolean @default(false)
   two_fa      Boolean @default(false)
   two_fa_key  String  @unique
