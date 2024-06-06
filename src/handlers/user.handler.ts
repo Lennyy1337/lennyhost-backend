@@ -13,9 +13,29 @@ class UserHandler {
             const user = await userService.create(request.body);
 
             return reply.status(201).send({
-                data: {
+                user: {
                     id: user.id,
                 },
+            });
+        } catch (error) {
+            return handleHttpExceptionError(error, reply);
+        }
+    }
+
+    public async signInUser(
+        request: FastifyRequest<{
+            Body: { email: string; password: string };
+        }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const user = await userService.signInUser(
+                request.body.email,
+                request.body.password
+            );
+
+            return reply.status(200).send({
+                user,
             });
         } catch (error) {
             return handleHttpExceptionError(error, reply);

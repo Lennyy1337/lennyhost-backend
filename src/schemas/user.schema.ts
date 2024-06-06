@@ -10,3 +10,13 @@ export const createUserSchema = createYupSchema((yup) => ({
         })
         .noUnknown(),
 }));
+
+export const signInUserSchema = createYupSchema((yup) => ({
+    body: yup
+        .object()
+        .shape({
+            email: yup.string().email().trim().min(8).max(32).required(),
+            password: yup.string().trim().min(6).max(64).required(),
+        })
+        .noUnknown(),
+}));
