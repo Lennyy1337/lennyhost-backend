@@ -15,7 +15,7 @@ const APP_CONSTANTS = {
             `0x${crypto.createHash('sha256').update(os.hostname()).digest('hex')}`
         ) & 0xfffn,
     SEQUENCE_MASK: 0xfffn,
-    JWT_ISSUER: 'kepler',
+    JWT_ISSUER: 'lennyhost',
     JWT_SECRET: process.env.JWT_SECRET,
     REDIS_URL: process.env.REDIS_URL,
     DATABASE_URL: process.env.DATABASE_URL,

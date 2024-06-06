@@ -4,7 +4,7 @@ import { Html, Body } from '@react-email/components';
 export default function Email() {
     return (
         <Html>
-            <Body>Hello from Kepler!</Body>
+            <Body>Hello from lennyhost!</Body>
         </Html>
     );
 }

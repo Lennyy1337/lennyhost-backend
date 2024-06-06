@@ -11,10 +11,8 @@ datasource db {
 model User {
   id String @id @unique
 
-  name        String?
   username    String  @unique
   email       String  @unique
-  phone       String? @unique
   password    String
   avatar_hash String? @unique
   avatar      String

@@ -1,7 +1,7 @@
 services:
     redis:
         image: redis:7-alpine
-        container_name: kepler-redis
+        container_name: lennyhost-redis
         ports:
             - '6379:6379'
         volumes:
@@ -11,11 +11,11 @@ services:
         environment:
             - REDIS_PASSWORD=${REDIS_PASSWORD}
         networks:
-            - kepler
+            - lennyhost
 
     postgres:
         image: postgres:16-alpine
-        container_name: kepler-postgres
+        container_name: lennyhost-postgres
         environment:
             - NODE_ENV=${NODE_ENV}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -30,11 +30,11 @@ services:
             - postgres-data:/var/lib/postgresql/data
         restart: always
         networks:
-            - kepler
+            - lennyhost
 
     app:
         build: .
-        container_name: kepler-server
+        container_name: lennyhost-server
         env_file:
             - .env
         ports:
@@ -44,12 +44,12 @@ services:
             - postgres
         restart: always
         networks:
-            - kepler
+            - lennyhost
 
 volumes:
     redis-data:
     postgres-data:
 
 networks:
-    kepler:
-        name: kepler
+    lennyhost:
+        name: lennyhost
