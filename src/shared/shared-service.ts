@@ -1,4 +1,5 @@
 import db from '@/adapters/db';
+import redisInstance from '@/adapters/redis';
 
 import { id } from '@/utils/id';
 import { logger } from '@/utils/logger';
@@ -9,6 +10,7 @@ import { s3 } from '@/utils/s3';
 
 class SharedServiceBase {
     public readonly db: typeof db;
+    public readonly redis: typeof redisInstance;
     public readonly id: typeof id;
     public readonly log: typeof logger;
     public readonly jwt: typeof jwt;
@@ -18,6 +20,7 @@ class SharedServiceBase {
 
     constructor() {
         this.db = db;
+        this.redis = redisInstance;
         this.id = id;
         this.log = logger;
         this.jwt = jwt;

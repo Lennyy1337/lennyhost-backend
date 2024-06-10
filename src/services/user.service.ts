@@ -2,6 +2,14 @@ import SharedServiceBase from '@/shared/shared-service';
 import { userRepository } from '@/repository';
 import { hash, verify } from '@/utils/argon2';
 
+import {
+    RedisUserRefreshToken,
+    RedisUserAccessToken,
+    RedisMFAToken,
+    MfaJwtToken,
+} from '@/types/user';
+import { createHash } from 'crypto';
+
 class UserService extends SharedServiceBase {
     public readonly userRepository: typeof userRepository;
 
@@ -58,20 +66,148 @@ class UserService extends SharedServiceBase {
             );
         }
 
+        if (!user.two_fa) {
+            return {
+                '2fa': false,
+                tokens: await this.generateTokens(user),
+            };
+        }
+
+        const mfaSecret: string = this.id.generateCUID('sk', 32);
+        const mfaTokenRedis: RedisMFAToken = {
+            type: 'mfaToken',
+            object: {
+                user: {
+                    id: user.id,
+                },
+                metadata: {
+                    id: this.id.generateGUID(),
+                    secret: mfaSecret,
+                },
+            },
+        };
+
+        await this.redis.set(
+            `user:${user.id}:mfa-tokens`,
+            JSON.stringify(mfaTokenRedis),
+            'EX',
+            3600 / 4
+        );
+
+        return {
+            '2fa': true,
+            tokens: {
+                mfaToken: await this.jwt.generateJwtToken(
+                    {
+                        type: 'user:mfaToken',
+                        object: {
+                            id: mfaTokenRedis.object.metadata.id,
+                            user: {
+                                id: user.id,
+                            },
+                            metadata: {
+                                hash: createHash('sha256')
+                                    .update(
+                                        mfaTokenRedis.object.metadata.secret
+                                    )
+                                    .digest('hex'),
+                            },
+                        },
+                    },
+                    '15m'
+                ),
+            },
+        };
+    }
+
+    public async confirmMFA(code: string, mfaToken: string) {
+        const decodedToken = (await this.jwt.verifyJwtToken(
+            mfaToken
+        )) as MfaJwtToken;
+
+        if (!decodedToken) {
+            throw new this.httpException(
+                400,
+                'Invalid jwt token provided',
+                'invalid_request_error'
+            );
+        }
+
+        const redisMfaSession = await this.redis.get(
+            `user:${decodedToken.object.user.id}:mfa-tokens`
+        );
+
+        if (!redisMfaSession) {
+            throw new this.httpException(
+                404,
+                'Invalid session token provided',
+                'invalid_request_error'
+            );
+        }
+
+        const parsedMfaSession = JSON.parse(redisMfaSession) as RedisMFAToken;
+
+        return {
+            tokens: await this.generateTokens(parsedMfaSession.object.user),
+        };
+    }
+
+    private async generateTokens(user: { id: string }) {
         const accessTokenId = this.id.generateCUID('at', 32);
         const refreshTokenId = this.id.generateCUID('rt', 32);
 
-        const tokens = {
+        // TODO: use IPHASH in `allowFrom`
+        const redisRefreshToken: RedisUserRefreshToken = {
+            type: 'refreshToken',
+            object: {
+                user: {
+                    id: user.id,
+                    allowFrom: '0.0.0.0',
+                },
+                metadata: {
+                    id: refreshTokenId,
+                    secret: this.id.generateCUID('sk', 64),
+                },
+            },
+        };
+
+        const redisAccessToken: RedisUserAccessToken = {
+            type: 'accessToken',
+            object: {
+                id: accessTokenId,
+                refreshTokenId: refreshTokenId,
+                hash: createHash('sha256')
+                    .update(redisRefreshToken.object.metadata.secret)
+                    .digest('hex'),
+            },
+        };
+
+        await this.redis.set(
+            `user:${user.id}:refresh-tokens`,
+            JSON.stringify(redisRefreshToken),
+            'EX',
+            3600 * 24 * 365
+        );
+
+        await this.redis.set(
+            `user:${user.id}:access-tokens`,
+            JSON.stringify(redisAccessToken),
+            'EX',
+            3600 * 24 * 3
+        );
+
+        return {
             accessToken: await this.jwt.generateJwtToken(
                 {
+                    type: 'user:accessToken',
                     object: {
-                        type: 'user:accessToken',
                         id: accessTokenId,
-                        refreshToken: {
-                            id: refreshTokenId,
-                        },
                         user: {
                             id: user.id,
+                        },
+                        metadata: {
+                            refreshTokenId: refreshTokenId,
+                            hash: redisAccessToken.object.hash,
                         },
                     },
                 },
@@ -79,8 +215,8 @@ class UserService extends SharedServiceBase {
             ),
             refreshToken: await this.jwt.generateJwtToken(
                 {
+                    type: 'user:refreshToken',
                     object: {
-                        type: 'user:refreshToken',
                         id: refreshTokenId,
                         user: {
                             id: user.id,
@@ -89,19 +225,6 @@ class UserService extends SharedServiceBase {
                 },
                 '365d'
             ),
-        };
-
-        if (!user.two_fa) {
-            return {
-                '2fa': false,
-                tokens,
-            };
-        }
-
-        // TODO: Implement 2FA Turnkey system
-        return {
-            '2fa': true,
-            tokens: {},
         };
     }
 

@@ -20,6 +20,8 @@ model User {
   two_fa      Boolean @default(false)
   two_fa_key  String  @unique
 
+  secret String @unique
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
